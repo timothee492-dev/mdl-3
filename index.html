@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>MDL — Maison des Lycéens</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1C2126; --paper:#FFFFFF; --cream:#F4F1EA;
+    --accent:#2F5C82; --accent-deep:#1F415C; --good:#4F7942; --warn:#C85C3A;
+    --border:#DFD9CC;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  *{box-sizing:border-box;}
+  html{scroll-padding-top: env(safe-area-inset-top, 0px);}
+  body{margin:0;background:var(--cream);color:var(--ink);font-family:'Work Sans',Arial,sans-serif;-webkit-font-smoothing:antialiased;}
+  h1,h2,h3,.brand{font-family:'Fredoka','Work Sans',sans-serif;}
+  .wrap{max-width:760px;margin:0 auto;padding:0 22px;}
+
+  header.site{position:sticky;top:0;z-index:50;background:var(--paper);border-bottom:1px solid var(--border);padding-top:env(safe-area-inset-top,0px);}
+  .headbar{display:flex;align-items:center;justify-content:space-between;padding:14px 22px;max-width:760px;margin:0 auto;}
+  .brand{font-size:1.15rem;font-weight:600;color:var(--accent-deep);}
+  nav.tabs{display:flex;gap:4px;background:var(--cream);border:1px solid var(--border);border-radius:999px;padding:4px;}
+  nav.tabs button{font-family:'Work Sans',sans-serif;font-size:.88rem;font-weight:500;border:none;background:transparent;color:#5b5245;padding:8px 15px;border-radius:999px;cursor:pointer;}
+  nav.tabs button.active{background:var(--accent);color:#fff;}
+
+  .page{display:none;}
+  .page.active{display:block;}
+
+  .hero-bg{position:relative;min-height:78vh;display:flex;align-items:flex-end;background-size:cover;background-position:center;}
+  .hero-bg::before{content:'';position:absolute;inset:0;background:linear-gradient(180deg, rgba(15,20,25,.35) 0%, rgba(15,20,25,.75) 100%);}
+  .hero-bg .hero-inner{position:relative;z-index:1;width:100%;padding:40px 22px 36px;max-width:760px;margin:0 auto;color:#fff;}
+  .hero-bg h1{font-size:clamp(1.7rem,5vw,2.4rem);margin:0 0 6px;}
+  .hero-bg p{opacity:.9;margin:0 0 4px;max-width:52ch;}
+
+  section.block{padding:32px 0 44px;}
+
+  .poll-card{background:var(--paper);border:1px solid var(--border);border-radius:18px;padding:22px;margin-bottom:20px;}
+  .poll-card h3{margin:0 0 16px;font-size:1.1rem;}
+  .opt-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+  .opt-btn{flex:1;text-align:left;background:var(--cream);border:1.5px solid var(--border);border-radius:12px;padding:11px 14px;cursor:pointer;font-family:'Work Sans';font-size:.92rem;color:var(--ink);position:relative;overflow:hidden;}
+  .opt-btn .fill{position:absolute;inset:0;background:rgba(47,92,130,.15);width:0%;transition:width .4s ease;z-index:0;}
+  .opt-btn .label{position:relative;z-index:1;display:flex;justify-content:space-between;gap:10px;}
+  .opt-btn.selected{border-color:var(--accent);background:rgba(47,92,130,.08);}
+  .opt-btn.locked{cursor:default;}
+  .opt-btn .count{font-weight:600;color:var(--accent-deep);font-size:.82rem;}
+  .vote-btn{margin-top:6px;background:var(--accent);color:#fff;border:none;border-radius:999px;padding:11px 22px;font-family:'Work Sans';font-weight:600;font-size:.9rem;cursor:pointer;}
+  .vote-btn:disabled{background:#B9C2C9;cursor:not-allowed;}
+  .poll-note{font-size:.78rem;color:#7a7367;margin-top:10px;}
+  .total-votes{font-size:.78rem;color:#7a7367;margin-bottom:14px;}
+
+  .idea-box{background:var(--paper);border:1px solid var(--border);border-radius:18px;padding:26px;}
+  .idea-box textarea{width:100%;min-height:130px;border:1.5px solid var(--border);border-radius:12px;padding:14px;font-family:'Work Sans';font-size:.92rem;resize:vertical;background:var(--cream);color:var(--ink);}
+  .idea-box textarea:focus{outline:2px solid var(--accent);outline-offset:1px;}
+  .idea-submit{margin-top:12px;background:var(--accent);color:#fff;border:none;border-radius:999px;padding:12px 26px;font-weight:600;cursor:pointer;font-family:'Work Sans';font-size:.92rem;}
+  .idea-submit:disabled{background:#B9C2C9;cursor:not-allowed;}
+  .idea-feedback{margin-top:14px;padding:12px 14px;border-radius:12px;font-size:.88rem;display:none;}
+  .idea-feedback.show{display:block;}
+  .idea-feedback.ok{background:rgba(79,121,66,.12);color:var(--good);}
+  .idea-feedback.err{background:rgba(200,92,58,.12);color:var(--warn);}
+  .idea-anon{font-size:.78rem;color:#7a7367;margin-top:10px;}
+
+  /* admin */
+  .admin-login{max-width:340px;margin:60px auto;background:var(--paper);border:1px solid var(--border);border-radius:18px;padding:30px;text-align:center;}
+  .admin-login input{width:100%;border:1.5px solid var(--border);border-radius:10px;padding:11px 14px;font-size:1rem;margin:14px 0;text-align:center;letter-spacing:2px;}
+  .admin-login button{background:var(--accent);color:#fff;border:none;border-radius:999px;padding:11px 26px;font-weight:600;cursor:pointer;width:100%;}
+  .admin-login .err{color:var(--warn);font-size:.85rem;margin-top:8px;display:none;}
+  .admin-login .err.show{display:block;}
+
+  .admin-panel{display:none;}
+  .admin-panel.show{display:block;}
+  .admin-section{background:var(--paper);border:1px solid var(--border);border-radius:18px;padding:22px;margin-bottom:22px;}
+  .admin-section h2{font-size:1.05rem;margin:0 0 16px;}
+  .admin-poll-item{border:1px solid var(--border);border-radius:14px;padding:16px;margin-bottom:12px;}
+  .admin-poll-item .q{font-weight:600;margin-bottom:8px;}
+  .admin-opt-line{display:flex;justify-content:space-between;font-size:.85rem;color:#5b5245;padding:4px 0;}
+  .admin-btn-row{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;}
+  .admin-btn{background:var(--cream);border:1px solid var(--border);border-radius:999px;padding:7px 14px;font-size:.8rem;cursor:pointer;font-family:'Work Sans';}
+  .admin-btn.danger{color:var(--warn);}
+  .admin-btn.primary{background:var(--accent);color:#fff;border-color:var(--accent);}
+  .new-poll-form input, .new-poll-form textarea{width:100%;border:1.5px solid var(--border);border-radius:10px;padding:9px 12px;margin-bottom:8px;font-family:'Work Sans';font-size:.88rem;background:var(--cream);}
+  .idea-admin-item{border-bottom:1px dashed var(--border);padding:10px 0;font-size:.88rem;}
+  .idea-admin-item .ts{font-size:.72rem;color:#a39a86;}
+  .logout-link{font-size:.8rem;color:#7a7367;cursor:pointer;text-decoration:underline;float:right;}
+</style>
+</head>
+<body>
+
+<header class="site">
+  <div class="headbar">
+    <div class="brand">🎓 MDL</div>
+    <nav class="tabs">
+      <button data-target="sondage" class="active">Sondages</button>
+      <button data-target="idees">Idées</button>
+      <button data-target="admin">Admin</button>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+  <!-- ============ SONDAGE ============ -->
+  <section class="page active" id="page-sondage">
+    <div class="hero-bg" style="background-image:url('assets/bg-sondage.jpg')">
+      <div class="hero-inner">
+        <h1>Les sondages de la MDL</h1>
+        <p>Vote pour les jeux, les projets et les idées proposés — un vote par personne, résultats en direct.</p>
+      </div>
+    </div>
+    <div class="wrap">
+      <section class="block" id="polls-container">
+        <p style="color:#7a7367">Chargement des sondages…</p>
+      </section>
+    </div>
+  </section>
+
+  <!-- ============ IDÉES ============ -->
+  <section class="page" id="page-idees">
+    <div class="hero-bg" style="background-image:url('assets/bg-idees.jpg')">
+      <div class="hero-inner">
+        <h1>Boîte à idées</h1>
+        <p>Une suggestion, un jeu à acheter, une amélioration ? Écris-la ici, totalement anonyme.</p>
+      </div>
+    </div>
+    <div class="wrap">
+      <section class="block">
+        <div class="idea-box">
+          <textarea id="idea-text" maxlength="1000" placeholder="Ton idée pour la MDL…"></textarea>
+          <br>
+          <button class="idea-submit" id="idea-send">Envoyer mon idée</button>
+          <div class="idea-feedback" id="idea-feedback"></div>
+          <p class="idea-anon">100% anonyme — aucune information personnelle n'est demandée ou stockée.</p>
+        </div>
+      </section>
+    </div>
+  </section>
+
+  <!-- ============ ADMIN ============ -->
+  <section class="page" id="page-admin">
+    <div class="wrap">
+      <div class="admin-login" id="admin-login">
+        <h2 style="margin:0 0 4px">Espace admin MDL</h2>
+        <p style="color:#7a7367;font-size:.85rem;margin:0">Réservé au bureau de la MDL</p>
+        <input type="password" id="admin-code-input" placeholder="Code d'accès" autocomplete="off">
+        <button id="admin-login-btn">Entrer</button>
+        <div class="err" id="admin-login-err">Code incorrect.</div>
+      </div>
+
+      <div class="admin-panel" id="admin-panel">
+        <span class="logout-link" id="admin-logout">se déconnecter</span>
+        <section class="block" style="padding-top:20px">
+          <div class="admin-section">
+            <h2>Sondages</h2>
+            <div id="admin-polls-list"></div>
+            <details style="margin-top:14px">
+              <summary style="cursor:pointer;font-weight:600;font-size:.9rem">+ Créer un nouveau sondage</summary>
+              <div class="new-poll-form" style="margin-top:12px">
+                <input type="text" id="np-question" placeholder="Question du sondage">
+                <textarea id="np-options" rows="4" placeholder="Une option par ligne (2 minimum)"></textarea>
+                <button class="admin-btn primary" id="np-create">Créer le sondage</button>
+              </div>
+            </details>
+          </div>
+
+          <div class="admin-section">
+            <h2>Idées reçues (anonymes)</h2>
+            <div id="admin-ideas-list"><p style="color:#7a7367;font-size:.85rem">Chargement…</p></div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<script>
+const pages = { sondage:'page-sondage', idees:'page-idees', admin:'page-admin' };
+function goTo(target){
+  Object.values(pages).forEach(id => document.getElementById(id).classList.remove('active'));
+  document.getElementById(pages[target]).classList.add('active');
+  document.querySelectorAll('nav.tabs button').forEach(b => b.classList.toggle('active', b.dataset.target===target));
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+document.querySelectorAll('nav.tabs button').forEach(el=>{
+  el.addEventListener('click', ()=>goTo(el.dataset.target));
+});
+
+// ---------------- SONDAGES (public) ----------------
+let pollsState = [];
+let pollRefreshTimer = null;
+
+function votedKey(pollId, round){ return `mdl-voted-${pollId}-r${round}`; }
+
+function renderPolls(){
+  const container = document.getElementById('polls-container');
+  if(!pollsState.length){
+    container.innerHTML = '<p style="color:#7a7367">Aucun sondage pour le moment.</p>';
+    return;
+  }
+  container.innerHTML = pollsState.map(poll => {
+    const total = poll.options.reduce((s,o)=>s+(o.votes||0),0);
+    const already = localStorage.getItem(votedKey(poll.id, poll.round));
+    return `<div class="poll-card" data-poll="${poll.id}" data-round="${poll.round}">
+      <h3>${escapeHtml(poll.question)}</h3>
+      <div class="total-votes">${total} vote${total>1?'s':''}</div>
+      ${poll.options.map(o=>{
+        const pct = total ? Math.round((o.votes||0)/total*100) : 0;
+        return `<div class="opt-row">
+          <button class="opt-btn ${already?'locked':''}" data-opt="${o.id}">
+            <span class="fill" style="width:${pct}%"></span>
+            <span class="label"><span>${escapeHtml(o.text)}</span><span class="count">${o.votes||0} (${pct}%)</span></span>
+          </button>
+        </div>`;
+      }).join('')}
+      ${already
+        ? '<p class="poll-note">Tu as déjà voté à ce sondage. Merci !</p>'
+        : `<button class="vote-btn" disabled>Valider mon vote</button>`
+      }
+    </div>`;
+  }).join('');
+
+  if(!pollsState.length) return;
+  container.querySelectorAll('.poll-card').forEach(card => {
+    const pollId = card.dataset.poll;
+    const round = card.dataset.round;
+    const already = localStorage.getItem(votedKey(pollId, round));
+    if(already) return;
+    let selected = null;
+    const voteBtn = card.querySelector('.vote-btn');
+    card.querySelectorAll('.opt-btn').forEach(btn => {
+      btn.addEventListener('click', ()=>{
+        card.querySelectorAll('.opt-btn').forEach(b=>b.classList.remove('selected'));
+        btn.classList.add('selected');
+        selected = btn.dataset.opt;
+        voteBtn.disabled = false;
+      });
+    });
+    voteBtn.addEventListener('click', async ()=>{
+      if(!selected) return;
+      voteBtn.disabled = true;
+      voteBtn.textContent = 'Envoi…';
+      try {
+        const resp = await fetch('/.netlify/functions/poll', {
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body: JSON.stringify({ action:'vote', pollId, optionId: selected })
+        });
+        const data = await resp.json();
+        if(data.polls){
+          pollsState = data.polls;
+          localStorage.setItem(votedKey(pollId, round), '1');
+          renderPolls();
+        }
+      } catch(e){
+        voteBtn.disabled = false;
+        voteBtn.textContent = 'Valider mon vote';
+      }
+    });
+  });
+}
+
+async function loadPolls(){
+  try {
+    const resp = await fetch('/.netlify/functions/poll');
+    const data = await resp.json();
+    pollsState = data.polls || [];
+    renderPolls();
+  } catch(e){
+    document.getElementById('polls-container').innerHTML = '<p style="color:#7a7367">Impossible de charger les sondages pour le moment.</p>';
+  }
+}
+loadPolls();
+pollRefreshTimer = setInterval(loadPolls, 4000);
+
+function escapeHtml(str){
+  const d = document.createElement('div');
+  d.textContent = str;
+  return d.innerHTML;
+}
+
+// ---------------- IDÉES (public) ----------------
+const ideaText = document.getElementById('idea-text');
+const ideaSend = document.getElementById('idea-send');
+const ideaFeedback = document.getElementById('idea-feedback');
+
+ideaSend.addEventListener('click', async ()=>{
+  const text = ideaText.value.trim();
+  if(text.length < 3) return;
+  ideaSend.disabled = true;
+  ideaSend.textContent = 'Envoi…';
+  ideaFeedback.className = 'idea-feedback';
+  try {
+    const resp = await fetch('/.netlify/functions/idea', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ action:'submit', text })
+    });
+    const data = await resp.json();
+    if(data.accepted){
+      ideaFeedback.textContent = "Merci ! Ton idée a bien été transmise à la MDL.";
+      ideaFeedback.className = 'idea-feedback show ok';
+      ideaText.value = '';
+    } else if(data.accepted === false){
+      ideaFeedback.textContent = "Merci ! Ton idée a bien été transmise à la MDL.";
+      ideaFeedback.className = 'idea-feedback show ok';
+      ideaText.value = '';
+    } else {
+      ideaFeedback.textContent = data.error || "Un souci est survenu, réessaie plus tard.";
+      ideaFeedback.className = 'idea-feedback show err';
+    }
+  } catch(e){
+    ideaFeedback.textContent = "Un souci est survenu, réessaie plus tard.";
+    ideaFeedback.className = 'idea-feedback show err';
+  }
+  ideaSend.disabled = false;
+  ideaSend.textContent = 'Envoyer mon idée';
+});
+
+// ---------------- ADMIN ----------------
+let adminCode = null;
+
+document.getElementById('admin-login-btn').addEventListener('click', async ()=>{
+  const code = document.getElementById('admin-code-input').value;
+  const err = document.getElementById('admin-login-err');
+  err.classList.remove('show');
+  const resp = await fetch('/.netlify/functions/poll', {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({ action:'__check__', adminCode: code })
+  });
+  // poll.js renvoie 400 "Action inconnue" si le code est bon (passé le check admin),
+  // et 401 si le code est mauvais -> on s'en sert comme vérification.
+  if(resp.status === 401){
+    err.classList.add('show');
+    return;
+  }
+  adminCode = code;
+  document.getElementById('admin-login').style.display = 'none';
+  document.getElementById('admin-panel').classList.add('show');
+  loadAdminPolls();
+  loadAdminIdeas();
+});
+
+document.getElementById('admin-logout').addEventListener('click', ()=>{
+  adminCode = null;
+  document.getElementById('admin-login').style.display = 'block';
+  document.getElementById('admin-panel').classList.remove('show');
+  document.getElementById('admin-code-input').value = '';
+});
+
+async function loadAdminPolls(){
+  const resp = await fetch('/.netlify/functions/poll');
+  const data = await resp.json();
+  pollsState = data.polls || [];
+  const el = document.getElementById('admin-polls-list');
+  if(!pollsState.length){
+    el.innerHTML = '<p style="color:#7a7367;font-size:.85rem">Aucun sondage pour le moment.</p>';
+    return;
+  }
+  el.innerHTML = pollsState.map(p => {
+    const total = p.options.reduce((s,o)=>s+(o.votes||0),0);
+    return `<div class="admin-poll-item">
+      <div class="q">${escapeHtml(p.question)} <span style="font-weight:400;color:#a39a86">(manche ${p.round}, ${total} votes)</span></div>
+      ${p.options.map(o=>`<div class="admin-opt-line"><span>${escapeHtml(o.text)}</span><span>${o.votes||0}</span></div>`).join('')}
+      <div class="admin-btn-row">
+        <button class="admin-btn" data-act="reset" data-id="${p.id}">Nouvelle manche (reset)</button>
+        <button class="admin-btn danger" data-act="delete" data-id="${p.id}">Supprimer</button>
+      </div>
+    </div>`;
+  }).join('');
+
+  el.querySelectorAll('[data-act]').forEach(btn=>{
+    btn.addEventListener('click', async ()=>{
+      const act = btn.dataset.act;
+      const id = btn.dataset.id;
+      if(act === 'delete' && !confirm('Supprimer ce sondage ?')) return;
+      await fetch('/.netlify/functions/poll', {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ action: act, pollId: id, adminCode })
+      });
+      loadAdminPolls();
+    });
+  });
+}
+
+document.getElementById('np-create').addEventListener('click', async ()=>{
+  const question = document.getElementById('np-question').value.trim();
+  const options = document.getElementById('np-options').value.split('\n').map(s=>s.trim()).filter(Boolean);
+  if(!question || options.length < 2){ alert('Il faut une question et au moins 2 options.'); return; }
+  await fetch('/.netlify/functions/poll', {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({ action:'create', question, options, adminCode })
+  });
+  document.getElementById('np-question').value = '';
+  document.getElementById('np-options').value = '';
+  loadAdminPolls();
+});
+
+async function loadAdminIdeas(){
+  const resp = await fetch('/.netlify/functions/idea', {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({ action:'list', adminCode })
+  });
+  const data = await resp.json();
+  const el = document.getElementById('admin-ideas-list');
+  const ideas = data.ideas || [];
+  if(!ideas.length){
+    el.innerHTML = '<p style="color:#7a7367;font-size:.85rem">Aucune idée reçue pour le moment.</p>';
+    return;
+  }
+  el.innerHTML = ideas.map(i => `<div class="idea-admin-item">
+    <div class="ts">${new Date(i.ts).toLocaleString('fr-FR')}</div>
+    <div>${escapeHtml(i.text)}</div>
+  </div>`).join('');
+}
+</script>
+</body>
+</html>
