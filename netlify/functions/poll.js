@@ -1,6 +1,4 @@
-const { getStore } = require('@netlify/blobs');
-
-const store = () => getStore('mdl-data');
+const { getStore, connectLambda } = require('@netlify/blobs');
 
 function checkAdmin(code) {
   const real = process.env.ADMIN_CODE || 'TEST';
@@ -8,7 +6,8 @@ function checkAdmin(code) {
 }
 
 exports.handler = async function(event) {
-  const s = store();
+  connectLambda(event);
+  const s = getStore('mdl-data');
 
   if (event.httpMethod === 'GET') {
     const polls = (await s.get('polls', { type: 'json' })) || [];
