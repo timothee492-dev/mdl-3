@@ -1,4 +1,4 @@
-import { getStore } from '@netlify/blobs';
+const { getStore } = require('@netlify/blobs');
 
 const store = () => getStore('mdl-data');
 
@@ -7,7 +7,7 @@ function checkAdmin(code) {
   return typeof code === 'string' && code === real;
 }
 
-export async function handler(event) {
+exports.handler = async function(event) {
   const s = store();
 
   if (event.httpMethod === 'GET') {
@@ -86,7 +86,7 @@ export async function handler(event) {
   }
 
   return json(400, { error: 'Action inconnue' });
-}
+};
 
 function json(statusCode, obj) {
   return {
