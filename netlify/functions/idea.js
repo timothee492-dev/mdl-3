@@ -1,6 +1,4 @@
-const { getStore } = require('@netlify/blobs');
-
-const store = () => getStore('mdl-data');
+const { getStore, connectLambda } = require('@netlify/blobs');
 
 function checkAdmin(code) {
   const real = process.env.ADMIN_CODE || 'TEST';
@@ -9,7 +7,7 @@ function checkAdmin(code) {
 
 async function moderate(text) {
   const apiKey = process.env.GROQ_API_KEY;
-  if (!apiKey) return { ok: true }; // pas de clé configurée -> on laisse passer
+  if (!apiKey) return { ok: true };
 
   const prompt = `Tu modères une boîte à idées anonyme pour la Maison des Lycéens (MDL) d'un lycée français. Un élève a écrit le message suivant. Réponds UNIQUEMENT par un JSON strict de la forme {"ok": true ou false, "raison": "courte explication en français"}, sans aucun autre texte.
 
@@ -40,7 +38,7 @@ Message de l'élève : """${text}"""`;
     const parsed = JSON.parse(match[0]);
     return { ok: parsed.ok !== false, raison: parsed.raison || '' };
   } catch (e) {
-    return { ok: true }; // en cas d'erreur IA, on laisse passer plutôt que de bloquer les élèves
+    return { ok: true };
   }
 }
 
@@ -72,10 +70,11 @@ async function sendEmail(text) {
 exports.handler = async function(event) {
   if (event.httpMethod !== 'POST') return json(405, { error: 'Method not allowed' });
 
+  connectLambda(event);
+  const s = getStore('mdl-data');
+
   let body;
   try { body = JSON.parse(event.body || '{}'); } catch { return json(400, { error: 'Bad JSON' }); }
-
-  const s = store();
 
   if (body.action === 'list') {
     if (!checkAdmin(body.adminCode)) return json(401, { error: 'Code admin incorrect' });
