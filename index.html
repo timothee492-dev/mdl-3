@@ -6,86 +6,108 @@
 <title>MDL — Maison des Lycéens</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --ink:#1C2126; --paper:#FFFFFF; --cream:#F4F1EA;
-    --accent:#2F5C82; --accent-deep:#1F415C; --good:#4F7942; --warn:#C85C3A;
-    --border:#DFD9CC;
+    --bg:#FAF5EC; --card:#FFFFFF; --ink:#231D18; --ink-soft:#7A6F60;
+    --accent:#FF6B47; --accent-deep:#D9502E; --accent-soft:#FFE4D9;
+    --accent2:#3D3373; --accent2-deep:#292254;
+    --good:#3F8F5F; --warn:#D9502E;
+    --border:#EEE3D2;
     padding-top: env(safe-area-inset-top, 0px);
     padding-bottom: env(safe-area-inset-bottom, 0px);
   }
   *{box-sizing:border-box;}
   html{scroll-padding-top: env(safe-area-inset-top, 0px);}
-  body{margin:0;background:var(--cream);color:var(--ink);font-family:'Work Sans',Arial,sans-serif;-webkit-font-smoothing:antialiased;}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:'Work Sans',Arial,sans-serif;-webkit-font-smoothing:antialiased;}
   h1,h2,h3,.brand{font-family:'Fredoka','Work Sans',sans-serif;}
   .wrap{max-width:760px;margin:0 auto;padding:0 22px;}
 
-  header.site{position:sticky;top:0;z-index:50;background:var(--paper);border-bottom:1px solid var(--border);padding-top:env(safe-area-inset-top,0px);}
+  header.site{position:sticky;top:0;z-index:50;background:rgba(250,245,236,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--border);padding-top:env(safe-area-inset-top,0px);}
   .headbar{display:flex;align-items:center;justify-content:space-between;padding:14px 22px;max-width:760px;margin:0 auto;}
-  .brand{font-size:1.15rem;font-weight:600;color:var(--accent-deep);}
-  nav.tabs{display:flex;gap:4px;background:var(--cream);border:1px solid var(--border);border-radius:999px;padding:4px;}
-  nav.tabs button{font-family:'Work Sans',sans-serif;font-size:.88rem;font-weight:500;border:none;background:transparent;color:#5b5245;padding:8px 15px;border-radius:999px;cursor:pointer;}
+  .brand{font-size:1.2rem;font-weight:600;color:var(--accent2);display:flex;align-items:center;gap:8px;}
+  nav.tabs{display:flex;gap:4px;background:var(--card);border:1px solid var(--border);border-radius:999px;padding:4px;box-shadow:0 1px 0 rgba(35,29,24,.03);}
+  nav.tabs button{font-family:'Work Sans',sans-serif;font-size:.86rem;font-weight:600;border:none;background:transparent;color:var(--ink-soft);padding:8px 15px;border-radius:999px;cursor:pointer;transition:background .2s ease,color .2s ease;}
   nav.tabs button.active{background:var(--accent);color:#fff;}
 
   .page{display:none;}
-  .page.active{display:block;}
+  .page.active{display:block;animation:fadein .35s ease;}
+  @keyframes fadein{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
 
-  .hero-bg{position:relative;min-height:78vh;display:flex;align-items:flex-end;background-size:cover;background-position:center;}
-  .hero-bg::before{content:'';position:absolute;inset:0;background:linear-gradient(180deg, rgba(15,20,25,.35) 0%, rgba(15,20,25,.75) 100%);}
-  .hero-bg .hero-inner{position:relative;z-index:1;width:100%;padding:40px 22px 36px;max-width:760px;margin:0 auto;color:#fff;}
-  .hero-bg h1{font-size:clamp(1.7rem,5vw,2.4rem);margin:0 0 6px;}
-  .hero-bg p{opacity:.9;margin:0 0 4px;max-width:52ch;}
+  .hero-bg{position:relative;min-height:46vh;display:flex;align-items:flex-end;background-size:cover;background-position:center;overflow:hidden;}
+  .hero-bg::before{content:'';position:absolute;inset:0;background-size:cover;background-position:inherit;background-image:inherit;filter:blur(14px) saturate(1.4) brightness(.62);transform:scale(1.1);}
+  .hero-bg.sondage::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg, rgba(255,107,71,.55) 0%, rgba(41,34,84,.65) 100%);}
+  .hero-bg.idees::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg, rgba(61,51,115,.62) 0%, rgba(255,107,71,.5) 100%);}
+  .hero-bg .hero-inner{position:relative;z-index:1;width:100%;padding:38px 22px 34px;max-width:760px;margin:0 auto;color:#fff;}
+  .hero-bg h1{font-size:clamp(1.8rem,5.5vw,2.5rem);margin:0 0 8px;text-shadow:0 2px 12px rgba(0,0,0,.2);}
+  .hero-bg p{opacity:.95;margin:0;max-width:52ch;font-size:1rem;}
 
-  section.block{padding:32px 0 44px;}
+  section.block{padding:30px 0 46px;}
 
-  .poll-card{background:var(--paper);border:1px solid var(--border);border-radius:18px;padding:22px;margin-bottom:20px;}
-  .poll-card h3{margin:0 0 16px;font-size:1.1rem;}
-  .opt-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
-  .opt-btn{flex:1;text-align:left;background:var(--cream);border:1.5px solid var(--border);border-radius:12px;padding:11px 14px;cursor:pointer;font-family:'Work Sans';font-size:.92rem;color:var(--ink);position:relative;overflow:hidden;}
-  .opt-btn .fill{position:absolute;inset:0;background:rgba(47,92,130,.15);width:0%;transition:width .4s ease;z-index:0;}
-  .opt-btn .label{position:relative;z-index:1;display:flex;justify-content:space-between;gap:10px;}
-  .opt-btn.selected{border-color:var(--accent);background:rgba(47,92,130,.08);}
+  .poll-card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:22px;margin-bottom:18px;box-shadow:0 2px 10px -6px rgba(35,29,24,.15);}
+  .poll-card h3{margin:0 0 14px;font-size:1.12rem;}
+  .opt-row{margin-bottom:9px;}
+  .opt-btn{width:100%;text-align:left;background:var(--bg);border:1.5px solid var(--border);border-radius:13px;padding:12px 15px;cursor:pointer;font-family:'Work Sans';font-size:.92rem;color:var(--ink);position:relative;overflow:hidden;transition:transform .15s ease, border-color .15s ease;}
+  .opt-btn:active{transform:scale(.98);}
+  .opt-btn .fill{position:absolute;inset:0;background:linear-gradient(90deg, var(--accent-soft), transparent);width:0%;transition:width .5s cubic-bezier(.22,1,.36,1);z-index:0;}
+  .opt-btn .label{position:relative;z-index:1;display:flex;justify-content:space-between;gap:10px;font-weight:500;}
+  .opt-btn.selected{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft);}
   .opt-btn.locked{cursor:default;}
-  .opt-btn .count{font-weight:600;color:var(--accent-deep);font-size:.82rem;}
-  .vote-btn{margin-top:6px;background:var(--accent);color:#fff;border:none;border-radius:999px;padding:11px 22px;font-family:'Work Sans';font-weight:600;font-size:.9rem;cursor:pointer;}
-  .vote-btn:disabled{background:#B9C2C9;cursor:not-allowed;}
-  .poll-note{font-size:.78rem;color:#7a7367;margin-top:10px;}
-  .total-votes{font-size:.78rem;color:#7a7367;margin-bottom:14px;}
+  .opt-btn .count{font-weight:700;color:var(--accent-deep);font-size:.8rem;white-space:nowrap;}
+  .vote-btn{margin-top:8px;background:var(--accent);color:#fff;border:none;border-radius:999px;padding:12px 24px;font-family:'Work Sans';font-weight:700;font-size:.9rem;cursor:pointer;box-shadow:0 4px 0 var(--accent-deep);transition:transform .12s ease;}
+  .vote-btn:active{transform:translateY(2px);box-shadow:0 2px 0 var(--accent-deep);}
+  .vote-btn:disabled{background:#DCD3C4;box-shadow:none;cursor:not-allowed;}
+  .poll-note{font-size:.8rem;color:var(--good);margin-top:10px;font-weight:600;}
+  .poll-note.err{color:var(--warn);}
+  .total-votes{font-size:.78rem;color:var(--ink-soft);margin-bottom:14px;}
 
-  .idea-box{background:var(--paper);border:1px solid var(--border);border-radius:18px;padding:26px;}
-  .idea-box textarea{width:100%;min-height:130px;border:1.5px solid var(--border);border-radius:12px;padding:14px;font-family:'Work Sans';font-size:.92rem;resize:vertical;background:var(--cream);color:var(--ink);}
+  .idea-box{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:28px;box-shadow:0 2px 10px -6px rgba(35,29,24,.15);}
+  .idea-box textarea{width:100%;min-height:130px;border:1.5px solid var(--border);border-radius:14px;padding:15px;font-family:'Work Sans';font-size:.94rem;resize:vertical;background:var(--bg);color:var(--ink);}
   .idea-box textarea:focus{outline:2px solid var(--accent);outline-offset:1px;}
-  .idea-submit{margin-top:12px;background:var(--accent);color:#fff;border:none;border-radius:999px;padding:12px 26px;font-weight:600;cursor:pointer;font-family:'Work Sans';font-size:.92rem;}
-  .idea-submit:disabled{background:#B9C2C9;cursor:not-allowed;}
-  .idea-feedback{margin-top:14px;padding:12px 14px;border-radius:12px;font-size:.88rem;display:none;}
-  .idea-feedback.show{display:block;}
-  .idea-feedback.ok{background:rgba(79,121,66,.12);color:var(--good);}
-  .idea-feedback.err{background:rgba(200,92,58,.12);color:var(--warn);}
-  .idea-anon{font-size:.78rem;color:#7a7367;margin-top:10px;}
+  .idea-submit{margin-top:14px;background:var(--accent2);color:#fff;border:none;border-radius:999px;padding:13px 26px;font-weight:700;cursor:pointer;font-family:'Work Sans';font-size:.92rem;box-shadow:0 4px 0 var(--accent2-deep);}
+  .idea-submit:active{transform:translateY(2px);box-shadow:0 2px 0 var(--accent2-deep);}
+  .idea-submit:disabled{background:#DCD3C4;box-shadow:none;cursor:not-allowed;}
+  .idea-feedback{margin-top:16px;padding:13px 16px;border-radius:14px;font-size:.9rem;display:none;align-items:center;gap:8px;}
+  .idea-feedback.show{display:flex;}
+  .idea-feedback.ok{background:rgba(63,143,95,.12);color:var(--good);}
+  .idea-feedback.err{background:rgba(217,80,46,.1);color:var(--warn);}
+  .idea-anon{font-size:.78rem;color:var(--ink-soft);margin-top:12px;}
 
   /* admin */
-  .admin-login{max-width:340px;margin:60px auto;background:var(--paper);border:1px solid var(--border);border-radius:18px;padding:30px;text-align:center;}
-  .admin-login input{width:100%;border:1.5px solid var(--border);border-radius:10px;padding:11px 14px;font-size:1rem;margin:14px 0;text-align:center;letter-spacing:2px;}
-  .admin-login button{background:var(--accent);color:#fff;border:none;border-radius:999px;padding:11px 26px;font-weight:600;cursor:pointer;width:100%;}
-  .admin-login .err{color:var(--warn);font-size:.85rem;margin-top:8px;display:none;}
+  .admin-login{max-width:340px;margin:60px auto;background:var(--accent2);color:#fff;border-radius:22px;padding:34px 30px;text-align:center;box-shadow:0 10px 30px -12px rgba(41,34,84,.5);}
+  .admin-login h2{margin:0 0 4px;}
+  .admin-login p{opacity:.8;font-size:.85rem;margin:0;}
+  .admin-login input{width:100%;border:none;border-radius:10px;padding:12px 14px;font-size:1rem;margin:16px 0;text-align:center;letter-spacing:2px;font-family:'Work Sans';}
+  .admin-login button{background:var(--accent);color:#fff;border:none;border-radius:999px;padding:12px 26px;font-weight:700;cursor:pointer;width:100%;font-family:'Work Sans';}
+  .admin-login .err{color:#FFD3C4;font-size:.85rem;margin-top:10px;display:none;}
   .admin-login .err.show{display:block;}
 
   .admin-panel{display:none;}
   .admin-panel.show{display:block;}
-  .admin-section{background:var(--paper);border:1px solid var(--border);border-radius:18px;padding:22px;margin-bottom:22px;}
-  .admin-section h2{font-size:1.05rem;margin:0 0 16px;}
-  .admin-poll-item{border:1px solid var(--border);border-radius:14px;padding:16px;margin-bottom:12px;}
-  .admin-poll-item .q{font-weight:600;margin-bottom:8px;}
-  .admin-opt-line{display:flex;justify-content:space-between;font-size:.85rem;color:#5b5245;padding:4px 0;}
+  .admin-topbar{background:var(--accent2);color:#fff;padding:16px 0;margin-bottom:24px;}
+  .admin-topbar .wrap{display:flex;justify-content:space-between;align-items:center;}
+  .admin-topbar h2{margin:0;font-size:1.15rem;}
+  .logout-link{font-size:.8rem;color:#fff;opacity:.8;cursor:pointer;text-decoration:underline;background:none;border:none;font-family:'Work Sans';}
+
+  .admin-section{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:24px;margin-bottom:22px;box-shadow:0 2px 10px -6px rgba(35,29,24,.1);}
+  .admin-section h2{font-size:1.05rem;margin:0 0 16px;display:flex;align-items:center;gap:8px;}
+  .admin-poll-item{border:1px solid var(--border);border-radius:16px;padding:17px;margin-bottom:12px;background:var(--bg);}
+  .admin-poll-item .q{font-weight:700;margin-bottom:8px;}
+  .admin-poll-item .meta{font-weight:400;color:var(--ink-soft);font-size:.82rem;}
+  .admin-opt-line{display:flex;justify-content:space-between;font-size:.85rem;color:var(--ink-soft);padding:4px 0;}
   .admin-btn-row{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;}
-  .admin-btn{background:var(--cream);border:1px solid var(--border);border-radius:999px;padding:7px 14px;font-size:.8rem;cursor:pointer;font-family:'Work Sans';}
+  .admin-btn{background:var(--card);border:1.5px solid var(--border);border-radius:999px;padding:8px 15px;font-size:.8rem;cursor:pointer;font-family:'Work Sans';font-weight:600;color:var(--ink);}
+  .admin-btn.warn{color:var(--accent-deep);border-color:var(--accent-soft);}
   .admin-btn.danger{color:var(--warn);}
   .admin-btn.primary{background:var(--accent);color:#fff;border-color:var(--accent);}
-  .new-poll-form input, .new-poll-form textarea{width:100%;border:1.5px solid var(--border);border-radius:10px;padding:9px 12px;margin-bottom:8px;font-family:'Work Sans';font-size:.88rem;background:var(--cream);}
-  .idea-admin-item{border-bottom:1px dashed var(--border);padding:10px 0;font-size:.88rem;}
-  .idea-admin-item .ts{font-size:.72rem;color:#a39a86;}
-  .logout-link{font-size:.8rem;color:#7a7367;cursor:pointer;text-decoration:underline;float:right;}
+  .new-poll-form{margin-top:14px;padding-top:14px;border-top:1px dashed var(--border);}
+  .new-poll-form input, .new-poll-form textarea{width:100%;border:1.5px solid var(--border);border-radius:12px;padding:10px 13px;margin-bottom:9px;font-family:'Work Sans';font-size:.88rem;background:var(--bg);}
+  details summary{cursor:pointer;font-weight:700;font-size:.92rem;color:var(--accent2);list-style:none;}
+  details summary::-webkit-details-marker{display:none;}
+  details summary::before{content:'+ ';}
+  details[open] summary::before{content:'– ';}
+  .idea-admin-item{border-bottom:1px dashed var(--border);padding:11px 0;font-size:.88rem;}
+  .idea-admin-item .ts{font-size:.72rem;color:var(--ink-soft);}
 </style>
 </head>
 <body>
@@ -105,7 +127,7 @@
 
   <!-- ============ SONDAGE ============ -->
   <section class="page active" id="page-sondage">
-    <div class="hero-bg" style="background-image:url('assets/bg-sondage.jpg')">
+    <div class="hero-bg sondage" style="background-image:url('assets/bg-sondage.jpg')">
       <div class="hero-inner">
         <h1>Les sondages de la MDL</h1>
         <p>Vote pour les jeux, les projets et les idées proposés — un vote par personne, résultats en direct.</p>
@@ -113,14 +135,14 @@
     </div>
     <div class="wrap">
       <section class="block" id="polls-container">
-        <p style="color:#7a7367">Chargement des sondages…</p>
+        <p style="color:var(--ink-soft)">Chargement des sondages…</p>
       </section>
     </div>
   </section>
 
   <!-- ============ IDÉES ============ -->
   <section class="page" id="page-idees">
-    <div class="hero-bg" style="background-image:url('assets/bg-idees.jpg')">
+    <div class="hero-bg idees" style="background-image:url('assets/bg-idees.jpg')">
       <div class="hero-inner">
         <h1>Boîte à idées</h1>
         <p>Une suggestion, un jeu à acheter, une amélioration ? Écris-la ici, totalement anonyme.</p>
@@ -143,34 +165,38 @@
   <section class="page" id="page-admin">
     <div class="wrap">
       <div class="admin-login" id="admin-login">
-        <h2 style="margin:0 0 4px">Espace admin MDL</h2>
-        <p style="color:#7a7367;font-size:.85rem;margin:0">Réservé au bureau de la MDL</p>
+        <h2>Espace admin MDL</h2>
+        <p>Réservé au bureau de la MDL</p>
         <input type="password" id="admin-code-input" placeholder="Code d'accès" autocomplete="off">
         <button id="admin-login-btn">Entrer</button>
         <div class="err" id="admin-login-err">Code incorrect.</div>
       </div>
 
       <div class="admin-panel" id="admin-panel">
-        <span class="logout-link" id="admin-logout">se déconnecter</span>
-        <section class="block" style="padding-top:20px">
-          <div class="admin-section">
-            <h2>Sondages</h2>
-            <div id="admin-polls-list"></div>
-            <details style="margin-top:14px">
-              <summary style="cursor:pointer;font-weight:600;font-size:.9rem">+ Créer un nouveau sondage</summary>
-              <div class="new-poll-form" style="margin-top:12px">
-                <input type="text" id="np-question" placeholder="Question du sondage">
-                <textarea id="np-options" rows="4" placeholder="Une option par ligne (2 minimum)"></textarea>
-                <button class="admin-btn primary" id="np-create">Créer le sondage</button>
-              </div>
-            </details>
+        <div class="admin-topbar">
+          <div class="wrap">
+            <h2>🎛️ Panneau admin</h2>
+            <button class="logout-link" id="admin-logout">se déconnecter</button>
           </div>
+        </div>
 
-          <div class="admin-section">
-            <h2>Idées reçues (anonymes)</h2>
-            <div id="admin-ideas-list"><p style="color:#7a7367;font-size:.85rem">Chargement…</p></div>
-          </div>
-        </section>
+        <div class="admin-section">
+          <h2>📊 Sondages</h2>
+          <div id="admin-polls-list"></div>
+          <details class="new-poll-form">
+            <summary>Créer un nouveau sondage</summary>
+            <div style="margin-top:12px">
+              <input type="text" id="np-question" placeholder="Question du sondage" maxlength="200">
+              <textarea id="np-options" rows="4" placeholder="Une option par ligne (2 à 8)"></textarea>
+              <button class="admin-btn primary" id="np-create">Créer le sondage</button>
+            </div>
+          </details>
+        </div>
+
+        <div class="admin-section">
+          <h2>💡 Idées reçues (anonymes)</h2>
+          <div id="admin-ideas-list"><p style="color:var(--ink-soft);font-size:.85rem">Chargement…</p></div>
+        </div>
       </div>
     </div>
   </section>
@@ -189,16 +215,22 @@ document.querySelectorAll('nav.tabs button').forEach(el=>{
   el.addEventListener('click', ()=>goTo(el.dataset.target));
 });
 
+function escapeHtml(str){
+  const d = document.createElement('div');
+  d.textContent = str;
+  return d.innerHTML;
+}
+
 // ---------------- SONDAGES (public) ----------------
 let pollsState = [];
-let pollRefreshTimer = null;
+let pollsLoadedAt = null; // anti-bot: horodatage du premier chargement réussi
 
 function votedKey(pollId, round){ return `mdl-voted-${pollId}-r${round}`; }
 
 function renderPolls(){
   const container = document.getElementById('polls-container');
   if(!pollsState.length){
-    container.innerHTML = '<p style="color:#7a7367">Aucun sondage pour le moment.</p>';
+    container.innerHTML = '<p style="color:var(--ink-soft)">Aucun sondage pour le moment.</p>';
     return;
   }
   container.innerHTML = pollsState.map(poll => {
@@ -218,12 +250,11 @@ function renderPolls(){
       }).join('')}
       ${already
         ? '<p class="poll-note">Tu as déjà voté à ce sondage. Merci !</p>'
-        : `<button class="vote-btn" disabled>Valider mon vote</button>`
+        : `<button class="vote-btn" disabled>Valider mon vote</button><p class="poll-note err" style="display:none"></p>`
       }
     </div>`;
   }).join('');
 
-  if(!pollsState.length) return;
   container.querySelectorAll('.poll-card').forEach(card => {
     const pollId = card.dataset.poll;
     const round = card.dataset.round;
@@ -231,6 +262,7 @@ function renderPolls(){
     if(already) return;
     let selected = null;
     const voteBtn = card.querySelector('.vote-btn');
+    const noteErr = card.querySelector('.poll-note.err');
     card.querySelectorAll('.opt-btn').forEach(btn => {
       btn.addEventListener('click', ()=>{
         card.querySelectorAll('.opt-btn').forEach(b=>b.classList.remove('selected'));
@@ -243,21 +275,29 @@ function renderPolls(){
       if(!selected) return;
       voteBtn.disabled = true;
       voteBtn.textContent = 'Envoi…';
+      noteErr.style.display = 'none';
       try {
         const resp = await fetch('/.netlify/functions/poll', {
           method:'POST',
           headers:{'Content-Type':'application/json'},
-          body: JSON.stringify({ action:'vote', pollId, optionId: selected })
+          body: JSON.stringify({ action:'vote', pollId, optionId: selected, loadedAt: pollsLoadedAt })
         });
         const data = await resp.json();
-        if(data.polls){
+        if(resp.ok && data.polls){
           pollsState = data.polls;
           localStorage.setItem(votedKey(pollId, round), '1');
           renderPolls();
+        } else {
+          voteBtn.disabled = false;
+          voteBtn.textContent = 'Valider mon vote';
+          noteErr.textContent = data.error || "Une erreur est survenue, réessaie.";
+          noteErr.style.display = 'block';
         }
       } catch(e){
         voteBtn.disabled = false;
         voteBtn.textContent = 'Valider mon vote';
+        noteErr.textContent = "Connexion impossible, réessaie.";
+        noteErr.style.display = 'block';
       }
     });
   });
@@ -268,19 +308,14 @@ async function loadPolls(){
     const resp = await fetch('/.netlify/functions/poll');
     const data = await resp.json();
     pollsState = data.polls || [];
+    if(pollsLoadedAt === null) pollsLoadedAt = Date.now();
     renderPolls();
   } catch(e){
-    document.getElementById('polls-container').innerHTML = '<p style="color:#7a7367">Impossible de charger les sondages pour le moment.</p>';
+    document.getElementById('polls-container').innerHTML = '<p style="color:var(--ink-soft)">Impossible de charger les sondages pour le moment.</p>';
   }
 }
 loadPolls();
-pollRefreshTimer = setInterval(loadPolls, 4000);
-
-function escapeHtml(str){
-  const d = document.createElement('div');
-  d.textContent = str;
-  return d.innerHTML;
-}
+setInterval(loadPolls, 4000);
 
 // ---------------- IDÉES (public) ----------------
 const ideaText = document.getElementById('idea-text');
@@ -300,12 +335,8 @@ ideaSend.addEventListener('click', async ()=>{
       body: JSON.stringify({ action:'submit', text })
     });
     const data = await resp.json();
-    if(data.accepted){
-      ideaFeedback.textContent = "Merci ! Ton idée a bien été transmise à la MDL.";
-      ideaFeedback.className = 'idea-feedback show ok';
-      ideaText.value = '';
-    } else if(data.accepted === false){
-      ideaFeedback.textContent = "Merci ! Ton idée a bien été transmise à la MDL.";
+    if(data.accepted === true || data.accepted === false){
+      ideaFeedback.textContent = "✅ Merci ! Ton idée a bien été transmise à la MDL.";
       ideaFeedback.className = 'idea-feedback show ok';
       ideaText.value = '';
     } else {
@@ -332,9 +363,9 @@ document.getElementById('admin-login-btn').addEventListener('click', async ()=>{
     headers:{'Content-Type':'application/json'},
     body: JSON.stringify({ action:'__check__', adminCode: code })
   });
-  // poll.js renvoie 400 "Action inconnue" si le code est bon (passé le check admin),
-  // et 401 si le code est mauvais -> on s'en sert comme vérification.
-  if(resp.status === 401){
+  if(resp.status === 401 || resp.status === 429){
+    const data = await resp.json().catch(()=>({}));
+    err.textContent = data.error || 'Code incorrect.';
     err.classList.add('show');
     return;
   }
@@ -358,17 +389,17 @@ async function loadAdminPolls(){
   pollsState = data.polls || [];
   const el = document.getElementById('admin-polls-list');
   if(!pollsState.length){
-    el.innerHTML = '<p style="color:#7a7367;font-size:.85rem">Aucun sondage pour le moment.</p>';
+    el.innerHTML = '<p style="color:var(--ink-soft);font-size:.85rem">Aucun sondage pour le moment.</p>';
     return;
   }
   el.innerHTML = pollsState.map(p => {
     const total = p.options.reduce((s,o)=>s+(o.votes||0),0);
     return `<div class="admin-poll-item">
-      <div class="q">${escapeHtml(p.question)} <span style="font-weight:400;color:#a39a86">(manche ${p.round}, ${total} votes)</span></div>
+      <div class="q">${escapeHtml(p.question)} <span class="meta">(manche ${p.round}, ${total} votes)</span></div>
       ${p.options.map(o=>`<div class="admin-opt-line"><span>${escapeHtml(o.text)}</span><span>${o.votes||0}</span></div>`).join('')}
       <div class="admin-btn-row">
-        <button class="admin-btn" data-act="reset" data-id="${p.id}">Nouvelle manche (reset)</button>
-        <button class="admin-btn danger" data-act="delete" data-id="${p.id}">Supprimer</button>
+        <button class="admin-btn warn" data-act="reset" data-id="${p.id}">🔄 Nouvelle manche</button>
+        <button class="admin-btn danger" data-act="delete" data-id="${p.id}">🗑️ Supprimer</button>
       </div>
     </div>`;
   }).join('');
@@ -378,11 +409,15 @@ async function loadAdminPolls(){
       const act = btn.dataset.act;
       const id = btn.dataset.id;
       if(act === 'delete' && !confirm('Supprimer ce sondage ?')) return;
-      await fetch('/.netlify/functions/poll', {
+      const resp = await fetch('/.netlify/functions/poll', {
         method:'POST',
         headers:{'Content-Type':'application/json'},
         body: JSON.stringify({ action: act, pollId: id, adminCode })
       });
+      if(!resp.ok){
+        const data = await resp.json().catch(()=>({}));
+        alert(data.error || 'Erreur');
+      }
       loadAdminPolls();
     });
   });
@@ -392,11 +427,16 @@ document.getElementById('np-create').addEventListener('click', async ()=>{
   const question = document.getElementById('np-question').value.trim();
   const options = document.getElementById('np-options').value.split('\n').map(s=>s.trim()).filter(Boolean);
   if(!question || options.length < 2){ alert('Il faut une question et au moins 2 options.'); return; }
-  await fetch('/.netlify/functions/poll', {
+  const resp = await fetch('/.netlify/functions/poll', {
     method:'POST',
     headers:{'Content-Type':'application/json'},
     body: JSON.stringify({ action:'create', question, options, adminCode })
   });
+  if(!resp.ok){
+    const data = await resp.json().catch(()=>({}));
+    alert(data.error || 'Erreur lors de la création');
+    return;
+  }
   document.getElementById('np-question').value = '';
   document.getElementById('np-options').value = '';
   loadAdminPolls();
@@ -412,7 +452,7 @@ async function loadAdminIdeas(){
   const el = document.getElementById('admin-ideas-list');
   const ideas = data.ideas || [];
   if(!ideas.length){
-    el.innerHTML = '<p style="color:#7a7367;font-size:.85rem">Aucune idée reçue pour le moment.</p>';
+    el.innerHTML = '<p style="color:var(--ink-soft);font-size:.85rem">Aucune idée reçue pour le moment.</p>';
     return;
   }
   el.innerHTML = ideas.map(i => `<div class="idea-admin-item">
