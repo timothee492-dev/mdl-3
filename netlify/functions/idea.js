@@ -1,8 +1,41 @@
 const { getStore, connectLambda } = require('@netlify/blobs');
 
+function getIp(event) {
+  const h = event.headers || {};
+  return h['x-nf-client-connection-ip'] || (h['x-forwarded-for'] || '').split(',')[0].trim() || 'unknown';
+}
+
+async function rateLimit(store, key, limit, windowMs) {
+  const now = Date.now();
+  const rec = (await store.get(key, { type: 'json' })) || [];
+  const recent = rec.filter(t => now - t < windowMs);
+  if (recent.length >= limit) return false;
+  recent.push(now);
+  await store.setJSON(key, recent);
+  return true;
+}
+
 function checkAdmin(code) {
   const real = process.env.ADMIN_CODE || 'TEST';
   return typeof code === 'string' && code === real;
+}
+
+async function checkAdminWithLockout(store, ip, code) {
+  const key = `adminfail:${ip}`;
+  const windowMs = 5 * 60 * 1000;
+  let rec = (await store.get(key, { type: 'json' })) || { count: 0, first: Date.now() };
+  if (Date.now() - rec.first > windowMs) rec = { count: 0, first: Date.now() };
+
+  if (rec.count >= 5) return { locked: true };
+
+  if (!checkAdmin(code)) {
+    rec.count += 1;
+    await store.setJSON(key, rec);
+    return { locked: false, ok: false };
+  }
+
+  await store.setJSON(key, { count: 0, first: Date.now() });
+  return { locked: false, ok: true };
 }
 
 async function moderate(text) {
@@ -72,17 +105,23 @@ exports.handler = async function(event) {
 
   connectLambda(event);
   const s = getStore('mdl-data');
+  const ip = getIp(event);
 
   let body;
   try { body = JSON.parse(event.body || '{}'); } catch { return json(400, { error: 'Bad JSON' }); }
 
   if (body.action === 'list') {
-    if (!checkAdmin(body.adminCode)) return json(401, { error: 'Code admin incorrect' });
+    const gate = await checkAdminWithLockout(s, ip, body.adminCode);
+    if (gate.locked) return json(429, { error: 'Trop de tentatives, réessaie dans quelques minutes.' });
+    if (!gate.ok) return json(401, { error: 'Code admin incorrect' });
     const ideas = (await s.get('ideas', { type: 'json' })) || [];
     return json(200, { ideas });
   }
 
   if (body.action === 'submit') {
+    const okRate = await rateLimit(s, `rl:idea:${ip}`, 4, 60000);
+    if (!okRate) return json(429, { error: 'Trop d\'envois en peu de temps, réessaie dans une minute.' });
+
     const text = (body.text || '').trim();
     if (!text || text.length < 3) return json(400, { error: 'Message trop court' });
     if (text.length > 1000) return json(400, { error: 'Message trop long (1000 caractères max)' });
