@@ -1,4 +1,4 @@
-import { getStore } from '@netlify/blobs';
+const { getStore } = require('@netlify/blobs');
 
 const store = () => getStore('mdl-data');
 
@@ -69,7 +69,7 @@ async function sendEmail(text) {
   }
 }
 
-export async function handler(event) {
+exports.handler = async function(event) {
   if (event.httpMethod !== 'POST') return json(405, { error: 'Method not allowed' });
 
   let body;
@@ -103,7 +103,7 @@ export async function handler(event) {
   }
 
   return json(400, { error: 'Action inconnue' });
-}
+};
 
 function json(statusCode, obj) {
   return {
