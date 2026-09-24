@@ -38,6 +38,12 @@ async function checkAdminWithLockout(store, ip, code) {
   return { locked: false, ok: true };
 }
 
+async function archivePoll(store, poll) {
+  const arch = (await store.get('archive', { type: 'json' })) || [];
+  arch.unshift({ ...JSON.parse(JSON.stringify(poll)), closedAt: Date.now() });
+  await store.setJSON('archive', arch.slice(0, 300));
+}
+
 exports.handler = async function(event) {
   connectLambda(event);
   const s = getStore('mdl-data');
@@ -122,6 +128,7 @@ exports.handler = async function(event) {
     const { pollId } = body;
     const poll = polls.find(p => p.id === pollId);
     if (!poll) return json(404, { error: 'Sondage introuvable' });
+    await archivePoll(s, poll);
     poll.round = (poll.round || 1) + 1;
     poll.options.forEach(o => o.votes = 0);
     await s.setJSON('polls', polls);
@@ -130,9 +137,16 @@ exports.handler = async function(event) {
 
   if (action === 'delete') {
     const { pollId } = body;
+    const poll = polls.find(p => p.id === pollId);
+    if (poll) await archivePoll(s, poll);
     polls = polls.filter(p => p.id !== pollId);
     await s.setJSON('polls', polls);
     return json(200, { polls });
+  }
+
+  if (action === 'archive_list') {
+    const archive = (await s.get('archive', { type: 'json' })) || [];
+    return json(200, { archive });
   }
 
   return json(400, { error: 'Action inconnue' });
